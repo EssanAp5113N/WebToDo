@@ -1,0 +1,64 @@
+{
+    "categories": [
+        {
+            "id": 1,
+            "name": "Health",
+            "icon_id": ""
+        },
+        {
+            "id": 2,
+            "name": "Education",
+            "icon_id": ""
+        }
+    ],
+
+    "tasklists": [
+        {
+            "id": 1,
+            "title": "Check health",
+            "category_id": 1,
+            "total_tasks": 5,
+            "done_tasks": 3,
+            "task": []
+            
+        },
+
+        {
+            "id": 1,
+            "title": "Homework",
+            "category_id": 2,
+            "total_tasks": 4,
+            "done_tasks": 4,
+            "task": [
+                {
+                    "id": 1,
+                    "text": "Do backflip",
+                    "done": false
+                },
+
+                {
+                    "id": 2,
+                    "text": "Sey bay-bay",
+                    "done": false
+                }
+            ]
+        },
+
+        {
+            "id": 2,
+            "title": "Go to school",
+            "category_id": 2,
+            "total_tasks": 4,
+            "done_tasks": 4,
+            "task": [
+                {
+                    "id": 1,
+                    "text": "Ask",
+                    "done": false
+                }
+            ]
+        }
+
+
+    ]
+}
