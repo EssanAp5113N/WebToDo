@@ -6,7 +6,10 @@ import { useEffect, useState } from "react";
 
 
 const TaskGroups = (props) => {
-    const [taskList, setTaskList] = useState(props.$taskList)
+    const [taskList, setTaskList] = useState([])
+    useEffect(() => {
+        setTaskList(props.$taskList)
+    })
 
     return(
         <Grid $gap='10px' $justify='space-between'>

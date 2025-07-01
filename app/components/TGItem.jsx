@@ -13,12 +13,12 @@ const TGItem = (props) => {
         setCheckState(checkState ? false : true)
     }
 
-    console.log(props)
 
     const ClickLink = () => {
         localStorage.setItem('currentTaskList', JSON.stringify(props.el))
     }
 
+    console.log(props.el.task.slice(0, 3))
     return(
         <Flex $alignI='center' direction='column' $justify='center' $bradius='12px' $shadow='-3px 5px 18px 26px rgba(186, 193, 198, 0.1)' $gap='13px' $minwidth='228px' $minheight='200px'>
             <Flex $gap='5px' direction='column' width='95%' height='20%' $alignI='center' $borderbottom='1px rgb(172,172,172) solid'>
@@ -30,12 +30,13 @@ const TGItem = (props) => {
                     <Text size='16px' color='black'>...</Text>
                 </Flex>
                 <Flex width='90%' $justify='flex-end'>
-                    <Text size='12px' color='black'>2/8 Done</Text>
+                    <Text size='12px' color='black'>0/{props.el.task.length} Done</Text>
                 </Flex>
             </Flex>    
             <Flex direction='column' width='60%' height='40%' $gap='10px'>
-                <Text size='16px' color='black'>dada</Text>
-                <Text size='16px' color='black'>sdgdg</Text>
+                {props.el.task && props.el.task.slice(0, 3).map(el => 
+                    <p key={el.id}>{el.text}</p>
+                )}
             </Flex>
             <Flex width='75%' $justify='flex-end'>
                 <Button onClick={ClickLink} $primary $padding='5px' $bradius='4px' $border='1px rgb(220,127,17) solid' ><Link  href={`http://localhost:3000/groups/${props.TGname}/taskLists/${props.el.title}`}><Text $primary color='rgb(220,127,17)'>View All</Text></Link></Button>

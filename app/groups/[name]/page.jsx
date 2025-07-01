@@ -36,23 +36,22 @@ const Page = ({params}) => {
     const [currentTaskList, setCurrentTaskList] = useState([])
 
     useEffect(() => {
+        let list = []
         taskListCI.forEach(function(item, i, arr){
                 if (item.category_id === currentCategory.id){
-                    currentTaskList.push(item)
+                    list.push(item)
                 }
             })
+        setCurrentTaskList(list)
     }, [])
     
     
     
-    
     const ClickAddModal = () => {
-        currentTaskList.push({id: currentTaskList.length + 1, title: taskListName, category_id: currentCategory.id, total_tasks: 1, done_tasks: 1})
-        
+        currentTaskList.push({id: currentTaskList.length + 1, title: taskListName, category_id: currentCategory.id, total_tasks: 1, done_tasks: 1})      
         setModalActive(false)
         setTaskListName('')
         setTaskListCI('')
-        console.log(currentTaskList)
     } 
     
     const ClickBack = () => {
