@@ -13,7 +13,6 @@ const TLItem = (props) => {
         setCheckState(checkState ? false : true)
     }
 
-    console.log(props)
 
     const DeletTask = (e) => {
         currentTaskId = JSON.parse(e.target.value.taskId)

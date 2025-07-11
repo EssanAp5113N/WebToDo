@@ -43,6 +43,7 @@ const Page = ({params}) => {
                 }
             })
         setCurrentTaskList(list)
+        console.log('sss')
     }, [])
     
     

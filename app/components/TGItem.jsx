@@ -18,7 +18,6 @@ const TGItem = (props) => {
         localStorage.setItem('currentTaskList', JSON.stringify(props.el))
     }
 
-    console.log(props.el.task.slice(0, 3))
     return(
         <Flex $alignI='center' direction='column' $justify='center' $bradius='12px' $shadow='-3px 5px 18px 26px rgba(186, 193, 198, 0.1)' $gap='13px' $minwidth='228px' $minheight='200px'>
             <Flex $gap='5px' direction='column' width='95%' height='20%' $alignI='center' $borderbottom='1px rgb(172,172,172) solid'>
