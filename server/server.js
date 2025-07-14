@@ -1,63 +1,59 @@
-import express from 'express'
-import crypto from 'crypto'
-import cors from 'cors'
+const express = require('express');
+const fs = require('fs/promises');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const cors = require('cors')
 
-const app = express()
-const PORT = 3001
-
+const app = express();
+app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }))
 
-app.use(express.json())
+const JWT_SECRET = 'секретный_ключ';
 
-let users = []
+async function readUsers() {
+    const data = await fs.readFile('./data/users.json', 'utf8');
+    return JSON.parse(data);
+}
 
-
-app.post('/auth/register', (req, res) => {
-  const { email, username, password } = req.body
-
-  if (!email || !username || !password) {
-    return res.status(400).json({ message: 'All fields are required' })
-  }
-
-  const userExists = users.find(user => user.email === email)
-  if (userExists) {
-    return res.status(409).json({ message: 'User already exists' })
-  }
-
-  users.push({ email, username, password })
-
-  res.status(201).json({ message: 'User created successfully' })
-})
+async function writeUsers(users) {
+    await fs.writeFile('./data/users.json', JSON.stringify(users, null, 2));
+}
 
 
-app.post('/auth/login', (req, res) => {
-  const { email, password } = req.body
+app.post('/auth/register', async (req, res) => {
+    const { username, password } = req.body;
+    const users = await readUsers();
 
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' })
-  }
+    if (users.find(u => u.username === username)) {
+        return res.status(400).json({ message: 'Юзер уже есть' });
+    }
 
-  const user = users.find(u => u.email === email && u.password === password)
-  if (!user) {
-    return res.status(401).json({ message: 'Invalid credentials' })
-  }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = { id: Date.now(), username, password: hashedPassword };
+    users.push(newUser);
+    await writeUsers(users);
 
-  const token = crypto.randomBytes(16).toString('hex')
-
-  res.json({
-    access_token: token,
-    token_type: 'bearer'
-  })
-})
+    res.json({ message: 'Регистрация успешна' });
+});
 
 
-app.get('/test', (req, res) => {
-  res.json({ message: 'Всё работает', user: users })
-})
+app.post('/auth/login', async (req, res) => {
+    console.log(req.body)
+    const { email, password } = req.body;
+    const users = await readUsers();
+    const user = users.find(u => u.username == email);
 
-app.listen(PORT, () => {
-  console.log(`🔥 Server running on http://localhost:${PORT}`)
-})
+    if (!user) return res.status(400).json({ message: 'Не нашел' });
+
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(400).json({ message: 'Неверный логин или пароль' });
+
+    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+    res.json({ message: 'Вход успешен', token });
+});
+
+const PORT = 3001;
+app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));

@@ -9,7 +9,7 @@ const StyledText = styled.p`
     
 
 ${props => props.$primary && css`
-    color: rgb(219, 129, 20);
+    color: ${props => props.color || 'rgb(219, 129, 20)'};
     width: 100%;
     height: 100%;
     align-items: center;
@@ -20,7 +20,9 @@ ${props => props.$primary && css`
         color: white;
     }
     `
+
 }
+
 `
 
 const Text = (props) => {

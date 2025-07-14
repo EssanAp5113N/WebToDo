@@ -1,6 +1,7 @@
 'use client'
 
 import { BiMoon } from "react-icons/bi";
+import { BiSolidMoon } from "react-icons/bi";
 import { useContext, useEffect, useState } from "react"
 import styled, {ThemeProvider} from "styled-components";
 import ToDoGroups from "./components/ToDoGroups";
@@ -26,10 +27,13 @@ const HomeBlock = styled.div`
 `
 
 const theme = {
-  color: {
     primary: 'black',
-    secondary: 'white',
-  }
+    secondary: {
+      backcolor: 'black',
+      color1: 'white',
+      color2: '#8043fd',
+      color3: 'rgb(172,172,172)'
+    },
 }
 
 const Home = () => {
@@ -42,7 +46,10 @@ const Home = () => {
     const changeTDCategories = JSON.parse(localStorage.getItem('TDCategories'))
     return changeTDCategories || defaultTDCategories
   })
-  const [dataLoc, setDataLoc] = useState([])
+  const [the, setThe] = useState(() => {
+    const hh = localStorage.getItem('mode')
+    return hh || 'false'
+  })
 
   
 
@@ -54,12 +61,24 @@ const Home = () => {
     setInputName('')
   }
 
+  const ChangeTheme = () => {
+    setThe((cur) => {
+      const newTheme = cur === 'false' ? 'true' : 'false';
+      localStorage.setItem('mode', newTheme)
+      return newTheme
+    })
+
+    const body = document.body;
+    const newColor = the === 'true' ? 'white' : 'black';
+    body.style.setProperty('--body-background-color', newColor);
+  }
 
   useEffect(() => {
     let now = new Date()
     setTime(now.toLocaleDateString('en-US', { month: "long", day: 'numeric', year: 'numeric'}))
-
-    console.log(localStorage.getItem('userToken'))
+    const body = document.body;
+    const newColor = localStorage.getItem('mode') === 'true' ? 'black' : 'white';
+    body.style.setProperty('--body-background-color', newColor);
   }, []) 
 
 
@@ -67,14 +86,20 @@ const Home = () => {
     <ThemeProvider theme={theme}>
       <HomeBlock>
           <Flex $justify='space-between' height='10%'>
-              <Title size='50px'>Todo List</Title>
+              <Title theme={theme} $themeval={the} size='50px'>Todo List</Title>
               <Flex $justify='space-between' width='10%'>
-                <Button $primary $padding='5px' width='60%' $bradius='4px' $border='1px rgb(220,127,17) solid' ><Link  href='LogIn'><Text $primary color='rgb(220,127,17)'>Log In</Text></Link></Button>
-                <Button><Text color='rgba(220,127,17, 1)' size='26px'><BiMoon></BiMoon></Text></Button>
+                <Button theme={theme} $themeval={the} $primary $padding='5px' width='60%' $bradius='4px' $border='1px rgb(220,127,17) solid' ><Link  href='LogIn'><Text $primary  color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Log In</Text></Link></Button>
+                <Button onClick={ChangeTheme}>
+                  {the === 'true' ? (
+                    <Text color='#8043fd' size='26px'><BiSolidMoon></BiSolidMoon></Text>
+                  ) : (
+                    <Text color='rgba(220,127,17, 1)' size='26px'><BiMoon></BiMoon></Text>
+                  )}
+                  </Button>
               </Flex>
           </Flex>
-        <Text size='16px'>{time}</Text>
-        <ToDoGroups $listCategories={listCategories} $MState={modalActive} $setMState={setModalActive}/>
+        <Text theme={theme} $themeval={the} size='16px'>{time}</Text>
+        <ToDoGroups theme={theme} $themeval={the} $listCategories={listCategories} $MState={modalActive} $setMState={setModalActive}/>
       </HomeBlock>
       <Modal $MState={modalActive} $setMState={setModalActive}>
         <Text size='24px' color='black'>Добавить категорию</Text>
@@ -83,7 +108,7 @@ const Home = () => {
           <input type="text"  placeholder="Выберите иконку" onChange={(e) => setInputIconId(e.target.value)} value={inputIconId} />
         </Flex>
         <Flex height='10%' width='90%' $justify='flex-end'>
-          <Button onClick={ClickAddModal} $primary $bradius='10px' width='25%' $background='rgb(220,127,17)'><Text $primary size='16px' color='white'>Добавить</Text></Button>
+          <Button theme={theme} $themeval={the} onClick={ClickAddModal} $primary $bradius='10px' width='25%' $background='rgb(220,127,17)'><Text $primary size='16px' color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Добавить</Text></Button>
         </Flex>
       </Modal>
     </ThemeProvider>

@@ -23,6 +23,15 @@ const StaledGroup = styled.div`
     flex-direction: column;
     height: 90%;
 `
+const theme = {
+    primary: 'black',
+    secondary: {
+      backcolor: 'black',
+      color1: 'white',
+      color2: '#8043fd',
+      color3: 'rgb(172,172,172)'
+    },
+}
 
 
 const Page = ({params}) => {
@@ -33,6 +42,10 @@ const Page = ({params}) => {
         const el = JSON.parse(localStorage.getItem('currentCategory'))
         return el || []
     })
+    const [the, setThe] = useState(() => {
+    const hh = localStorage.getItem('mode')
+    return hh || 'false'
+  })
     const [currentTaskList, setCurrentTaskList] = useState([])
 
     useEffect(() => {
@@ -43,7 +56,9 @@ const Page = ({params}) => {
                 }
             })
         setCurrentTaskList(list)
-        console.log('sss')
+        const body = document.body;
+        const newColor = localStorage.getItem('mode') === 'true' ? 'black' : 'white';
+        body.style.setProperty('--body-background-color', newColor);
     }, [])
     
     
@@ -69,25 +84,26 @@ const Page = ({params}) => {
         <StaledGroup>
             <Link href='http://localhost:3000' onClick={ClickBack}>
                 <Flex $alignI='center' $gap='8px'>
-                    <Text size='17px' color='rgb(220,127,17)'>Go Back</Text> 
+                    <Text size='17px' color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Go Back</Text> 
                 </Flex>
             </Link>
             <Flex $justify='space-between' height='10%'>
-                <Title size='50px'>{title}</Title>
-                <Button $primary $MState={modalActive} $setMState={setModalActive} $bradius='10px' width='13%' $background='rgb(220,127,17)'><Text $primary size='16px' color='white'>Creat List</Text></Button>
+                <Title theme={theme} $themeval={the} size='50px'>{title}</Title>
+                <Button theme={theme} $themeval={the} $primary $MState={modalActive} $setMState={setModalActive} $bradius='10px' width='13%' $background='rgb(220,127,17)'><Text $primary size='16px' color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Creat List</Text></Button>
             </Flex>
             <Flex height='12%' width='20%' $justify='space-between' $gap='15px'>
-                <Button $bradius='10px' width='45%'  $background='rgba(220,127,17, 0.2)' ><Text color='rgb(219, 129, 20)'>All</Text></Button>
+                <Button $bradius='10px' width='45%'  $background={the === 'false' ? 'rgba(220,127,17, 0.2)' : 'rgba(129, 67, 253, 0.2)'} ><Text color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>All</Text></Button>
                 <Button $bradius='10px' width='45%'><Text>Completed</Text></Button>
             </Flex>
-            <TaskGroups $taskList={currentTaskList} title={title}/>
+            <TaskGroups theme={theme} $themeval={the} $taskList={currentTaskList} title={title}/>
             <Modal $MState={modalActive} $setMState={setModalActive}>
+                <Text size='24px' color='black'>Добавить лист</Text>
                 <Flex direction='column' height='20%' $justify='space-between' width='90%'>
                     <input type="text" placeholder="Введите название листа задач" onChange={(e) => setTaskListName(e.target.value)} value={taskListName} />
                     <input type="text" placeholder="Выберите релевантность" onChange={(e) => setTaskListCI(e.target.value)} value={''} />
                 </Flex>
                 <Flex height='10%' width='90%' $justify='flex-end'>
-                    <Button onClick={ClickAddModal} $primary $bradius='10px' width='25%' $background='rgb(220,127,17)'><Text $primary size='16px' color='white'>Добавить</Text></Button>
+                    <Button theme={theme} $themeval={the} onClick={ClickAddModal} $primary $bradius='10px' width='25%' $background='rgb(220,127,17)'><Text $primary size='16px' color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Добавить</Text></Button>
                 </Flex>
             </Modal>
         </StaledGroup>

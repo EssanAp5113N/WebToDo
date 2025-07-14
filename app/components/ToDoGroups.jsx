@@ -7,14 +7,9 @@ const ToDoGroups = ({...props}) => {
     return(
         <Grid $gap='30px' $justify='space-between'>
             {props.$listCategories && props.$listCategories.map(el  =>
-                <ToDoGItem key={el.id} el={el} />
+                <ToDoGItem  key={el.id} el={el} theme={props.theme} $themeval={props.$themeval} />
             )}
-            {/* <ToDoGItem title='Health'/>
-            <ToDoGItem title='Education'/>
-            <ToDoGItem title='Food'/>
-            <ToDoGItem title='Lifetyle'/>
-            <ToDoGItem title='Group Work'/> */}
-            <AddBlock $MState={props.$MState} $setMState={props.$setMState}></AddBlock>
+            <AddBlock theme={props.theme} $themeval={props.$themeval} $MState={props.$MState} $setMState={props.$setMState}></AddBlock>
         </Grid>
     )
 }

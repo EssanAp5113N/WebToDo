@@ -9,13 +9,13 @@ const TaskGroups = (props) => {
     const [taskList, setTaskList] = useState([])
     useEffect(() => {
         setTaskList(props.$taskList)
-        console.log('taskGroups')
+        
     })
 
     return(
         <Grid $gap='10px' $justify='space-between'>
             {taskList && taskList.map(el  =>
-                <TGItem  key={el.id} TGname={props.title} el={el}/>
+                <TGItem theme={props.theme} $themeval={props.$themeval}  key={el.id} TGname={props.title} el={el}/>
             )}
         </Grid>
     )

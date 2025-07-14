@@ -20,9 +20,9 @@ const TLItem = (props) => {
     }
 
     return(
-        <Flex height='10%' $border='1px black solid' $bradius='4px' $justify='space-between' $alignI='center' $padding='15px'>
+        <Flex $background='white' height='10%' $border='1px black solid' $bradius='4px' $justify='space-between' $alignI='center' $padding='15px'>
             <Flex $alignI='center' width='75%' $gap='10px'>
-                <Checkbox onClick={ChangeCheck} $checked={checkState}></Checkbox> 
+                <Checkbox theme={props.theme} $themeval={props.$themeval} onClick={ChangeCheck} $checked={checkState}></Checkbox> 
                 <label onClick={ChangeCheck} htmlFor={props.taskId}><Text size='12px' color='black'>{props.text}</Text></label>
             </Flex>
             <Button value={JSON.stringify(props.taskId)} onClick={DeletTask}>X</Button>

@@ -9,10 +9,9 @@ const StyledButton = styled.button`
     height: ${props => props.height};
     border-radius: ${props => props.$bradius || '0px'};
     padding: ${props => props.$padding || '0'};
-    
 
 
-${props => props.$primary && css`
+${props => props.$secondary && css`
     color: 'rgb(219, 129, 20)';
     background: none;
     border: 1px rgb(220,127,17) solid;
@@ -22,6 +21,19 @@ ${props => props.$primary && css`
         color: white;
     }
     `
+}
+
+${props => props.$primary && css`
+    background: none;
+    border: ${props => props.$themeval === 'false' ? `1px rgb(219, 129, 20) solid` : `1px ${props.theme.secondary.color2} solid`};
+
+
+    &:hover {
+        background: ${props => props.$themeval === 'false' ? `rgb(219, 129, 20)` : props.theme.secondary.color2};
+        color: white;
+    }
+    `
+
 }
 `
 
