@@ -63,6 +63,7 @@ const Page = ({params}) => {
     const n = resolvedParams.name
     const task = t.replaceAll(/%20/g, " ");
     const name = n.replaceAll(/%20/g, " ");
+    
     return(
         <StaledTask>
             <Link href={`http://localhost:3000/groups/${name}`} onClick={ClickBack}>
@@ -84,11 +85,12 @@ const Page = ({params}) => {
             </Flex>
             <TaskListItems theme={theme} $themeval={the} tasks={currentTasks} />
             <Modal $MState={modalActive} $setMState={setModalActive}>
+                <Text size='24px' color='black'>Добавить задачу</Text>
                 <Flex direction='column' height='20%' $justify='space-between' width='90%'>
                     <input type="text" placeholder="Введите задачу" onChange={(e) => setTaskName(e.target.value)} value={taskName} />
                 </Flex>
                 <Flex height='10%' width='90%' $justify='flex-end'>
-                    <Button theme={theme} $themeval={the} onClick={ClickAddModal} $primary $bradius='10px' width='25%' $background='rgb(220,127,17)'><Text $primary size='16px' color='white'>Добавить</Text></Button>
+                    <Button theme={theme} $themeval={the} onClick={ClickAddModal} $primary $bradius='10px' width='25%' $background='rgb(220,127,17)'><Text $primary size='16px' color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Добавить</Text></Button>
                 </Flex>
             </Modal>
         </StaledTask>

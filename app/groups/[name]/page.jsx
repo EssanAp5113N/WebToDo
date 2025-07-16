@@ -49,6 +49,9 @@ const Page = ({params}) => {
     const [currentTaskList, setCurrentTaskList] = useState([])
 
     useEffect(() => {
+        const body = document.body;
+        const newColor = localStorage.getItem('mode') === 'true' ? 'black' : 'white';
+        body.style.setProperty('--body-background-color', newColor);
         let list = []
         taskListCI.forEach(function(item, i, arr){
                 if (item.category_id === currentCategory.id){
@@ -56,9 +59,6 @@ const Page = ({params}) => {
                 }
             })
         setCurrentTaskList(list)
-        const body = document.body;
-        const newColor = localStorage.getItem('mode') === 'true' ? 'black' : 'white';
-        body.style.setProperty('--body-background-color', newColor);
     }, [])
     
     
@@ -97,7 +97,7 @@ const Page = ({params}) => {
             </Flex>
             <TaskGroups theme={theme} $themeval={the} $taskList={currentTaskList} title={title}/>
             <Modal $MState={modalActive} $setMState={setModalActive}>
-                <Text size='24px' color='black'>Добавить лист</Text>
+                <Text size='24px' color='black'>Добавить список</Text>
                 <Flex direction='column' height='20%' $justify='space-between' width='90%'>
                     <input type="text" placeholder="Введите название листа задач" onChange={(e) => setTaskListName(e.target.value)} value={taskListName} />
                     <input type="text" placeholder="Выберите релевантность" onChange={(e) => setTaskListCI(e.target.value)} value={''} />
