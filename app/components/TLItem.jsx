@@ -8,15 +8,26 @@ import Checkbox from "./Checkbox";
 
 const TLItem = (props) => {
     const [checkState, setCheckState] = useState(false)
+    const [userToken, setUserToken] = useState(() => {
+                const token = localStorage.getItem('userToken')
+                const changeToken = token.replace(/"/g, '');
+                return changeToken || undefined
+            })
 
     const ChangeCheck = () => {
         setCheckState(checkState ? false : true)
     }
 
-
     const DeletTask = (e) => {
-        currentTaskId = JSON.parse(e.target.value.taskId)
-        currentTasks.slice(currentTaskId - 1, 1)
+        fetch(`http://localhost:3001/tasks/${props.taskId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            }
+        })
+        .then(response => response.json())
+        .then(json => console.log(json)) 
     }
 
     return(

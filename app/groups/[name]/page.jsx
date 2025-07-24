@@ -57,22 +57,15 @@ const Page = ({params}) => {
 
     useEffect(() => {
         let list = []
-        fetch(`http://localhost:3001/task-lists`, {
+        fetch(`http://localhost:3001/task-lists/${currentCategory.id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${userToken}`,
-            },
-        })
-        .then(response => response.json())
-        .then(json => {
-            json.forEach(function(item, i, arr){
-            if (item.category_id === currentCategory.id){
-                list.push(item)
             }
         })
-            setCurrentTaskList(list)
-        })
+        .then(response => response.json())
+        .then(json => setCurrentTaskList(json))
         const body = document.body;
         const newColor = localStorage.getItem('mode') === 'true' ? 'black' : 'white';
         body.style.setProperty('--body-background-color', newColor);
@@ -102,11 +95,21 @@ const Page = ({params}) => {
         localStorage.removeItem('currentCategory')
     }
 
+    const ClickDelCategory = () => {
+        fetch(`http://localhost:3001/categories/${currentCategory.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            }
+        })
+        .then(response => response.json())
+        .then(json => console.log(json)) 
+    }
     
     const resolvedParams = React.use(params)
     const t = resolvedParams.name
     const title = t.replaceAll(/%20/g, " ");
-
     return(
         <StaledGroup>
             <Link href='http://localhost:3000' onClick={ClickBack}>
@@ -116,7 +119,10 @@ const Page = ({params}) => {
             </Link>
             <Flex $justify='space-between' height='10%'>
                 <Title theme={theme} $themeval={the} size='50px'>{title}</Title>
-                <Button theme={theme} $themeval={the} $primary $MState={modalActive} $setMState={setModalActive} $bradius='10px' width='13%' $background='rgb(220,127,17)'><Text $primary size='16px' color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Creat List</Text></Button>
+                <Flex $justify='space-between' width='20%' $gap='10px'>
+                    <Button onClick={ClickDelCategory} theme={theme} $themeval={the} $primary $MState={modalActive} $bradius='10px' width='45%' $background='rgb(220,127,17)'><Link  href='../'><Text $primary size='16px' color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Delete Category</Text></Link></Button>
+                    <Button theme={theme} $themeval={the} $primary $MState={modalActive} $setMState={setModalActive} $bradius='10px' width='45%' $background='rgb(220,127,17)'><Text $primary size='16px' color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Creat List</Text></Button>
+                </Flex>
             </Flex>
             <Flex height='12%' width='20%' $justify='space-between' $gap='15px'>
                 <Button $bradius='10px' width='45%'  $background={the === 'false' ? 'rgba(220,127,17, 0.2)' : 'rgba(129, 67, 253, 0.2)'} ><Text color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>All</Text></Button>

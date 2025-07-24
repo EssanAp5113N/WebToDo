@@ -68,6 +68,12 @@ app.post('/categories', auth, async (req, res) => {
     res.json(newCat);
 });
 
+app.delete('/categories/:id', auth, async (req, res) => {
+    let categories = await read(categoriesFile);
+    categories = categories.filter(t => t.id != req.params.id);
+    await write(categoriesFile, categories);
+    res.json({ message: 'Category deleted' });
+});
 
 app.get('/task-lists', auth, async (req, res) => {
     const { category_id } = req.query;
@@ -80,6 +86,7 @@ app.get('/task-lists', auth, async (req, res) => {
     res.json(lists);
 });
 
+
 app.post('/task-lists', auth, async (req, res) => {
     const { title, category_id } = req.body;
     const lists = await read(taskListsFile);
@@ -90,11 +97,8 @@ app.post('/task-lists', auth, async (req, res) => {
 });
 
 app.get('/task-lists/:id', auth, async (req, res) => {
-    const lists = await read(taskListsFile);
-    const list = lists.find(l => l.id == req.params.id);
-    if (!list) return res.status(404).json({ message: 'Not found' });
-    const tasks = (await read(tasksFile)).filter(t => t.task_list_id == list.id);
-    res.json({ ...list, tasks });
+    const taskLists = (await read(taskListsFile)).filter(l => l.category_id == req.params.id);
+    res.json(taskLists);
 });
 
 app.delete('/task-lists/:id', auth, async (req, res) => {
@@ -106,6 +110,11 @@ app.delete('/task-lists/:id', auth, async (req, res) => {
     res.json({ message: 'Task list deleted' });
 });
 
+
+app.get('/tasks/:id', auth, async (req, res) => {
+    const tasks = (await read(tasksFile)).filter(l => l.task_list_id == req.params.id);
+    res.json(tasks);
+});
 
 app.post('/tasks', auth, async (req, res) => {
     const { text, done, task_list_id } = req.body;

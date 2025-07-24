@@ -40,19 +40,20 @@ const Page = ({params}) => {
             const changeToken = token.replace(/"/g, '');
             return changeToken || undefined
         })
-    const [currentTasks, setCurrentTasks] = useState(() => {
+    const [currentTaskList, setCurrentTaskList] = useState(() => {
             const el = JSON.parse(localStorage.getItem('currentTaskList'))
-            console.log(el)
-            return el.task || []
+            return el || []
         })
+
+    const [tasks, setTasks] = useState([])
     
     const [the, setThe] = useState(() => {
     const hh = localStorage.getItem('mode')
     return hh || 'false'
   })
-        
+    
     useEffect(() => {
-        fetch(`http://localhost:3001/task-lists/1752828268870`, {
+        fetch(`http://localhost:3001/tasks/${currentTaskList.id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -60,14 +61,27 @@ const Page = ({params}) => {
             },
         })
         .then(response => response.json())
-        .then(json => console.log(json))
+        .then(json => setTasks(json))
     }, [])
     
     const ClickAddModal = () => {
-        currentTasks.push({id: currentTasks.length + 1, text: taskName, done: false})
+        setModalActive(false)
+        fetch('http://localhost:3001/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+            body: JSON.stringify({
+                text: taskName,
+                done: false,
+                task_list_id: currentTaskList.id,
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json))
         localStorage.setItem('currentTaskList', JSON.stringify(currentTasks))
         setTaskName('')
-        setModalActive(false)
     }
 
     const ClickBack = () => {
@@ -75,13 +89,23 @@ const Page = ({params}) => {
         localStorage.removeItem('currentCategory')
     }
 
+    const ClickDelList = () => {
+        fetch(`http://localhost:3001/task-lists/${currentTaskList.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            }
+        })
+        .then(response => response.json())
+        .then(json => console.log(json)) 
+    }
 
     const resolvedParams = React.use(params)
     const t = resolvedParams.task
     const n = resolvedParams.name
     const task = t.replaceAll(/%20/g, " ");
     const name = n.replaceAll(/%20/g, " ");
-    
     return(
         <StaledTask>
             <Link href={`http://localhost:3000/groups/${name}`} onClick={ClickBack}>
@@ -92,7 +116,7 @@ const Page = ({params}) => {
             <Flex $justify='space-between' height='10%'>
                 <Title theme={theme} $themeval={the} size='50px'>{task}</Title>
                 <Flex height='100%' width='20%' $justify='space-between' $gap='15px'>
-                    <Button theme={theme} $themeval={the} $primary width='45%'  $bradius='10px' $border='1px rgb(220,127,17) solid' ><Text $primary color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Edit List</Text></Button>
+                    <Button onClick={ClickDelList} theme={theme} $themeval={the} $primary width='45%'  $bradius='10px' $border='1px rgb(220,127,17) solid' ><Link  href='../'><Text $primary color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Delete List</Text></Link></Button>
                     <Button theme={theme} $themeval={the} $primary $MState={modalActive} $setMState={setModalActive} $bradius='10px' width='45%' $background='rgb(220,127,17)'><Text $primary color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'}>Add List</Text></Button>
                 </Flex>
             </Flex>
@@ -101,7 +125,7 @@ const Page = ({params}) => {
                 <Text size='16px'>{`>`}</Text>
                 <Text color={the === 'false' ? 'rgba(220,127,17, 1)' : '#8043fd'} size='16px'>{task}</Text>
             </Flex>
-            <TaskListItems theme={theme} $themeval={the} tasks={currentTasks} />
+            <TaskListItems theme={theme} $themeval={the} tasks={tasks} />
             <Modal $MState={modalActive} $setMState={setModalActive}>
                 <Text size='24px' color='black'>Добавить задачу</Text>
                 <Flex direction='column' height='20%' $justify='space-between' width='90%'>
