@@ -4,15 +4,34 @@ import Text from "./Text";
 import Button from "./Button";
 import Link from "next/link";
 import Checkbox from "./Checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react"
+
 
 const TGItem = (props) => {
+    const [userToken, setUserToken] = useState(() => {
+        const token = localStorage.getItem('userToken')
+        const changeToken = token.replace(/"/g, '');
+        return changeToken || undefined
+    })
     const [checkState, setCheckState] = useState(false)
     const [the, setThe] = useState(() => {
     const hh = localStorage.getItem('mode')
     return hh || 'false'
-  })
-    
+    })
+    const [taskListStats, setTaskListStats] = useState([])
+    useEffect(() => {
+        fetch(`http://localhost:3001/task-lists/${props.el.id}/stats`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+        })
+        .then(response => response.json())
+        .then(json => setTaskListStats(json))
+    }, [])
+    console.log(taskListStats)
+
     const ChangeCheck = () => {
         setCheckState(checkState ? false : true)
     }
@@ -25,7 +44,7 @@ const TGItem = (props) => {
     return(
         <Flex $background='white' $alignI='center' direction='column' $justify='center' $bradius='12px' $shadow='-3px 5px 18px 26px rgba(186, 193, 198, 0.1)' $gap='13px' $minwidth='228px' $minheight='200px'>
             <Flex $gap='5px' direction='column' width='95%' height='20%' $alignI='center' $borderbottom='1px rgb(172,172,172) solid'>
-                <Flex $justify='space-around'>
+                <Flex $justify='space-around' height='50%'>
                     <Flex $alignI='center' width='75%' $gap='10px'>
                         <Checkbox theme={props.theme} $themeval={props.$themeval} onClick={ChangeCheck} $checked={checkState}></Checkbox>
                         <label onClick={ChangeCheck} htmlFor={`${props.el.id}`}><Text size='18px' color='black'>{props.el.title}</Text></label>
@@ -33,7 +52,7 @@ const TGItem = (props) => {
                     <Text size='16px' color='black'>...</Text>
                 </Flex>
                 <Flex width='90%' $justify='flex-end'>
-                    <Text size='12px' color='black'>0 / {props.el.length || 0}  Done</Text>
+                    <Text size='12px' color='black'>{taskListStats.done_tasks} / {taskListStats.total_tasks}  Done</Text>
                 </Flex>
             </Flex>    
             <Flex direction='column' width='60%' height='40%' $gap='10px'>

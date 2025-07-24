@@ -17,6 +17,7 @@ const TLItem = (props) => {
     const ChangeCheck = () => {
         setCheckState(checkState ? false : true)
     }
+    console.log(props.list.tasks)
 
     const DeletTask = (e) => {
         fetch(`http://localhost:3001/tasks/${props.taskId}`, {

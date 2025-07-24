@@ -2,7 +2,7 @@
 
 import { BiMoon } from "react-icons/bi";
 import { BiSolidMoon } from "react-icons/bi";
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import styled, {ThemeProvider} from "styled-components";
 import ToDoGroups from "./components/ToDoGroups";
 import Text from "./components/Text";
@@ -87,9 +87,16 @@ const Home = () => {
   }
 
   useEffect(() => {
-    fetch('http://localhost:3001/categories')
-      .then(response => response.json())
-      .then(json => setListCategories(json))
+    fetch('http://localhost:3001/categories', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+        })
+        .then(response => response.json())
+        .then(json => setListCategories(json))
+    
     let now = new Date()
     setTime(now.toLocaleDateString('en-US', { month: "long", day: 'numeric', year: 'numeric'}))
     const body = document.body;
