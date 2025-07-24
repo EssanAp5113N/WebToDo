@@ -56,8 +56,8 @@ const LogIn = () => {
         })
         .then(response => response.json())
         .then(json => localStorage.setItem('userToken', JSON.stringify(json.access_token)))
-        .then(json => console.log(json.access_token))
         
+        console.log(userToken)
         setEmail('')
         setPassword('')
     }

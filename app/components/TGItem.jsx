@@ -16,7 +16,7 @@ const TGItem = (props) => {
     const ChangeCheck = () => {
         setCheckState(checkState ? false : true)
     }
-
+    
 
     const ClickLink = () => {
         localStorage.setItem('currentTaskList', JSON.stringify(props.el))
@@ -33,7 +33,7 @@ const TGItem = (props) => {
                     <Text size='16px' color='black'>...</Text>
                 </Flex>
                 <Flex width='90%' $justify='flex-end'>
-                    <Text size='12px' color='black'>0/{props.el.task.length} Done</Text>
+                    <Text size='12px' color='black'>0 / {props.el.length || 0}  Done</Text>
                 </Flex>
             </Flex>    
             <Flex direction='column' width='60%' height='40%' $gap='10px'>

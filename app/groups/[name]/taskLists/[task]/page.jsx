@@ -1,7 +1,7 @@
 'use client'
 
 import styled from "styled-components"
-import React from "react"
+import React, { useEffect } from "react"
 import Link from "next/link"
 import Flex from "@/app/components/Flex"
 import Text from "@/app/components/Text"
@@ -35,15 +35,33 @@ const theme = {
 const Page = ({params}) => {
     const [modalActive, setModalActive] = useState(false)
     const [taskName, setTaskName] = useState('')
+    const [userToken, setUserToken] = useState(() => {
+            const token = localStorage.getItem('userToken')
+            const changeToken = token.replace(/"/g, '');
+            return changeToken || undefined
+        })
     const [currentTasks, setCurrentTasks] = useState(() => {
             const el = JSON.parse(localStorage.getItem('currentTaskList'))
+            console.log(el)
             return el.task || []
         })
+    
     const [the, setThe] = useState(() => {
     const hh = localStorage.getItem('mode')
     return hh || 'false'
   })
         
+    useEffect(() => {
+        fetch(`http://localhost:3001/task-lists/1752828268870`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+        })
+        .then(response => response.json())
+        .then(json => console.log(json))
+    }, [])
     
     const ClickAddModal = () => {
         currentTasks.push({id: currentTasks.length + 1, text: taskName, done: false})

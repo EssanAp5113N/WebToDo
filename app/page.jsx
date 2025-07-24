@@ -41,22 +41,35 @@ const Home = () => {
   const [modalActive, setModalActive] = useState(false)
   const [inputName, setInputName] = useState('')
   const [inputIconId, setInputIconId] = useState('')
-  const [listCategories, setListCategories] = useState(() => {
-    const defaultTDCategories = TextData.categories
-    const changeTDCategories = JSON.parse(localStorage.getItem('TDCategories'))
-    return changeTDCategories || defaultTDCategories
-  })
+  const [listCategories, setListCategories] = useState()
   const [the, setThe] = useState(() => {
     const hh = localStorage.getItem('mode')
     return hh || 'false'
   })
+  const [userToken, setUserToken] = useState(() => {
+        const token = localStorage.getItem('userToken')
+        const changeToken = token.replace(/"/g, '');
+        return changeToken || undefined
+    })
 
+  
   
 
   const ClickAddModal = () => {
     setModalActive(false)
-    listCategories.push({id: listCategories.length + 1, name: inputName, icon_id: inputIconId})
-    localStorage.setItem('TDCategories', JSON.stringify(listCategories))
+    fetch('http://localhost:3001/categories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+            body: JSON.stringify({
+                name: inputName,
+                icon_id: inputIconId,
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json))
     setInputIconId('')
     setInputName('')
   }
@@ -74,6 +87,9 @@ const Home = () => {
   }
 
   useEffect(() => {
+    fetch('http://localhost:3001/categories')
+      .then(response => response.json())
+      .then(json => setListCategories(json))
     let now = new Date()
     setTime(now.toLocaleDateString('en-US', { month: "long", day: 'numeric', year: 'numeric'}))
     const body = document.body;

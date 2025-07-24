@@ -35,36 +35,63 @@ const theme = {
 
 
 const Page = ({params}) => {
-    const [modalActive, setModalActive] = useState(false)
-    const [taskListName, setTaskListName] = useState('')
-    const [taskListCI, setTaskListCI] = useState(TextData.tasklists)
     const [currentCategory, setCurrentCategory] = useState(() => {
         const el = JSON.parse(localStorage.getItem('currentCategory'))
         return el || []
     })
+    const [userToken, setUserToken] = useState(() => {
+        const token = localStorage.getItem('userToken')
+        const changeToken = token.replace(/"/g, '');
+        return changeToken || undefined
+    })
+    const [modalActive, setModalActive] = useState(false)
+    const [taskListName, setTaskListName] = useState('')
+    const [taskListCI, setTaskListCI] = useState()
+
     const [the, setThe] = useState(() => {
     const hh = localStorage.getItem('mode')
     return hh || 'false'
   })
+
     const [currentTaskList, setCurrentTaskList] = useState([])
 
     useEffect(() => {
+        let list = []
+        fetch(`http://localhost:3001/task-lists`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+        })
+        .then(response => response.json())
+        .then(json => {
+            json.forEach(function(item, i, arr){
+            if (item.category_id === currentCategory.id){
+                list.push(item)
+            }
+        })
+            setCurrentTaskList(list)
+        })
         const body = document.body;
         const newColor = localStorage.getItem('mode') === 'true' ? 'black' : 'white';
         body.style.setProperty('--body-background-color', newColor);
-        let list = []
-        taskListCI.forEach(function(item, i, arr){
-                if (item.category_id === currentCategory.id){
-                    list.push(item)
-                }
-            })
-        setCurrentTaskList(list)
     }, [])
-    
-    
-    
+
     const ClickAddModal = () => {
-        currentTaskList.push({id: currentTaskList.length + 1, title: taskListName, category_id: currentCategory.id, total_tasks: 1, done_tasks: 1})      
+        fetch('http://localhost:3001/task-lists', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+            body: JSON.stringify({
+                title: taskListName,
+                category_id: currentCategory.id,
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json))     
         setModalActive(false)
         setTaskListName('')
         setTaskListCI('')
@@ -75,7 +102,7 @@ const Page = ({params}) => {
         localStorage.removeItem('currentCategory')
     }
 
-
+    
     const resolvedParams = React.use(params)
     const t = resolvedParams.name
     const title = t.replaceAll(/%20/g, " ");

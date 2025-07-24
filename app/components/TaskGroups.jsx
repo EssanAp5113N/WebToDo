@@ -9,7 +9,6 @@ const TaskGroups = (props) => {
     const [taskList, setTaskList] = useState([])
     useEffect(() => {
         setTaskList(props.$taskList)
-        
     })
 
     return(
